@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from bs4 import BeautifulSoup
+from collections import OrderedDict
 import os
 
 
@@ -20,19 +21,19 @@ def parse_path(fpath):
             for f in files:
                 if not f.endswith('realtor.com®.html'):
                     continue
-                print(f)
                 yield parse_file(os.path.join(root, f))
 
 def parse_file(fpath):
     with open(fpath) as fp:
         soup = BeautifulSoup(fp, "lxml")
-    d = {"home_insurance": None, "hoa_fees": None, "property_tax": None}
-    for k in d:
+    d = OrderedDict()
+    keys = ["full_address_display", "price", "rent", "home_insurance", "hoa_fees", "property_tax"]
+    for k in keys:
         try:
             d[k] = soup.find(id=k)["value"]
         except TypeError:
-            continue 
-    return ("\t".join(filter(None, d.values())))
+            d[k] = "" 
+    return (", ".join( d.values()))
 
 if __name__=="__main__":
     args = parse_args()
