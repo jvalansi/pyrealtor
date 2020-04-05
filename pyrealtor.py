@@ -23,14 +23,15 @@ def parse_args():
 
 def parse_path(fpath):
     if os.path.isfile(fpath):
+        p = parse_file(fpaht)
         if p:
            yield p
     elif os.path.isdir(fpath):
         for fname in os.listdir(fpath):
             f = os.path.join(fpath, fname)
-            logging.debug(f)
             if not os.path.isfile(f):
                 continue
+            logging.debug(f)
             for p in parse_file(f):
                 if p:
                     yield p
